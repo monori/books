@@ -21,6 +21,9 @@ class BookResource extends JsonResource
             'author' => $this->author,
             'price' => $this->price,
             'image_path' => $this->when('image_path', function () {
+                if (!$this->image_path) {
+                    return null;
+                }
                 return Storage::disk('public')->url($this->image_path);
             })
         ];

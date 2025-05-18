@@ -26,18 +26,12 @@ class BooksController extends Controller
      */
     public function store(Request $request): BookResource
     {
-        $path = null;
-        if ($request->hasFile('image')) {
-            $fileName = time() . '_' . $request->file('image')->getClientOriginalName();
-            $path = $request->file('image')->storeAs('images', $fileName, 'public');
-        }
-
         $book = Book::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'author' => $request->input('author'),
             'price' => $request->input('price'),
-            'image_path' => $path,
+            'image_path' => $request->input('image_path'),
         ]);
 
         return BookResource::make($book);
@@ -56,19 +50,13 @@ class BooksController extends Controller
      */
     public function update(Request $request, Book $book): BookResource
     {
-        $updateData = [
+        $book->update([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'author' => $request->input('author'),
             'price' => $request->input('price'),
-        ];
-
-        if ($request->hasFile('image')) {
-            $fileName = $book->id . '_' . $request->file('image')->getClientOriginalName();
-            $updateData['image_path'] = $request->file('image')->storeAs('images', $fileName, 'public');
-        }
-
-        $book->update($updateData);
+            'image_path' => $request->input('image_path'),
+        ]);
 
         return BookResource::make($book);
     }

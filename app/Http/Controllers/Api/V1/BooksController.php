@@ -16,7 +16,14 @@ class BooksController extends Controller
      */
     public function index(): ResourceCollection
     {
-        $books = \App\Models\Book::all();
+        $q = request()->query('query');
+        $books = \App\Models\Book::query()
+            ->when($q, function ($query) use ($q) {
+                $query->where('title', 'like', "%$q%")
+                    ->orWhere('author', 'like', "%$q%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return BookResource::collection($books);
     }
